@@ -42,11 +42,17 @@
                         </tr>
                     }
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="8" class="text-right">Total:</td>
+                        <td colspan="2">@Model.Sum(i => i.TotalValueAfterTaxing)</td>
+                    </tr>
+                </tfoot>
             </table>
-            <form method="post" asp-action="Save">
-                <input type="hidden" name="filePath" value="@ViewBag.FilePath" />
-                <button type="submit" class="btn btn-success">Save Changes</button>
-            </form>
+
+            <input type="hidden" name="filePath" value="@ViewBag.FilePath" />
+            <button type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("Edit", "Data", new { fileName = ViewBag.FileName })'">Edit</button>
+
         </div>
     }
 </div>

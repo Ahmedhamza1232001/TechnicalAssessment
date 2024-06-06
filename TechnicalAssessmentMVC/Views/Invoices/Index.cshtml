@@ -33,12 +33,7 @@
                 </tr>
             }
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="8" class="text-right">Total:</td>
-                <td colspan="2">@Model.Sum(i => i.TotalValueAfterTaxing)</td>
-            </tr>
-        </tfoot>
+
     </table>
     <form method="get" asp-action="Edit">
         <input type="hidden" name="fileName" value="@ViewBag.FileName" />
