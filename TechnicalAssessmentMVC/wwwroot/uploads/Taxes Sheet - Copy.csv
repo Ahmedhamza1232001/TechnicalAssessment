@@ -1,5 +1,5 @@
 Inv_No,Inv_CURNo,Inv_Date,Customer Code,Customer Name,REG_COUNTRY_APREV,Total Value After Taxing,Taxing Value,TotalValueBeforeTaxing
-1,EGP,12/11/2020,1,sdf,EG,1795,251.3,1543.7
+1,EGP,12/11/2020,1,عميل 1,EG,1795,251.3,1543.7
 2,EGP,12/11/2020,2,عميل 2,EG,25018,3502.52,21515.48
 3,EGP,12/11/2020,3,عميل 3,EG,2477,346.78,2130.22
 4,EGP,13/11/2020,4,عميل 4,EG,1480,207.2,1272.8
