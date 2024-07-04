@@ -1,54 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TechnicalAssessmentMVC.Services;
 
 namespace TechnicalAssessmentMVC.Controllers;
 public class UploadController : Controller
 {
-    private readonly ExcelService _excelService;
-    private readonly string _uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-    public UploadController(ExcelService excelService)
+    private readonly UploadService _uploadService;
+
+    public UploadController(UploadService uploadService)
     {
-        _excelService = excelService;
+        _uploadService = uploadService;
     }
 
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile file)
     {
-        if (file == null || file.Length == 0)
+        if (!_uploadService.IsValidFile(file))
         {
             ViewBag.Message = "Please upload a valid file.";
             return View("Index");
         }
 
-        var fileExtension = Path.GetExtension(file.FileName).ToLower();
+        var filePath = await _uploadService.SaveFileAsync(file);
+        var invoices = _uploadService.ReadCsvFile(filePath);
+        ViewBag.FilePath = filePath;
 
-        if (fileExtension == ".csv" || fileExtension == ".xlsx")
-        {
-            string filePath = Path.Combine(_uploadDirectory, file.FileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            if (fileExtension == ".xlsx")
-            {
-                string csvFilePath = Path.Combine(_uploadDirectory, Path.GetFileNameWithoutExtension(file.FileName) + ".csv");
-                _excelService.ConvertXlsxToCsv(filePath, csvFilePath);
-                ViewBag.FilePath = csvFilePath;
-            }
-            else
-            {
-                ViewBag.FilePath = filePath;
-            }
-
-            var invoices = _excelService.ReadCsvFile(ViewBag.FilePath);
-            return View("Index", invoices);
-        }
-        else
-        {
-            ViewBag.Message = "Please upload a valid CSV or XLSX file.";
-            return View("Index");
-        }
+        return View("Index", invoices);
     }
 
     [HttpPost]
@@ -56,10 +32,10 @@ public class UploadController : Controller
     {
         try
         {
-            var invoices = _excelService.ReadCsvFile(filePath);
+            var invoices = _uploadService.ReadCsvFile(filePath);
             var fileName = Path.GetFileName(filePath);
-            filePath = Path.Combine(_uploadDirectory, fileName);
-            _excelService.SaveCsvFile(filePath, invoices);
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+            _uploadService.SaveCsvFile(filePath, invoices);
             ViewBag.Message = "File saved successfully!";
             return View("Index", invoices);
         }
